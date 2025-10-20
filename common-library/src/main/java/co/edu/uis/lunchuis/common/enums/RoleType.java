@@ -1,4 +1,4 @@
-package co.edu.uis.lunchuis.identityservice.domain.valueobject;
+package co.edu.uis.lunchuis.common.enums;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * These roles help in managing access control and determining
  * permissible actions for users based on their designated role.
  */
-@Schema(description = "Enumeration of possible role names")
+@Schema(description = "Enumeration of possible role names.")
 public enum RoleType {
     STUDENT,
     ADMIN

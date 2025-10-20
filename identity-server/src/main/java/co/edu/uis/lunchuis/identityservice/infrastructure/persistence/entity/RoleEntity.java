@@ -1,6 +1,6 @@
-package co.edu.uis.lunchuis.identityservice.domain.entity;
+package co.edu.uis.lunchuis.identityservice.infrastructure.persistence.entity;
 
-import co.edu.uis.lunchuis.identityservice.domain.valueobject.RoleType;
+import co.edu.uis.lunchuis.common.enums.RoleType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,9 +17,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Schema(description = "Represents a user role in the system (e.g., STUDENT, ADMIN).")
-public final class Role {
+public final class RoleEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Schema(description = "Unique identifier of the role.",
             example = "123e4567-e89b-12d3-a456-426614174000")
     private UUID id;

@@ -1,42 +1,51 @@
 package co.edu.uis.lunchuis.identityservice.domain.repository;
 
-import co.edu.uis.lunchuis.identityservice.domain.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import co.edu.uis.lunchuis.identityservice.domain.model.User;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
- * Spring Data JPA repository for the {@link User} entity.
+ * Repository interface for managing {@link User} aggregate roots within the domain layer.
+ * This interface defines the contract for accessing and persisting user entities,
+ * abstracting away the details of the underlying data source.
+ * Implementations of this interface (for example, JPA-based or in-memory repositories)
+ * should reside in the infrastructure layer.
  */
-@Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository {
     /**
-     * Finds a user by their institutional email.
-     * @param email The user's email.
-     * @return An {@link Optional} containing the found user or empty if not found.
+     * Persists a {@link User} instance in the underlying data store.
+     * Depending on the implementation, this method may either insert or update
+     * the given user.
+     *
+     * @param user the user aggregate to persist (must not be {@code null})
+     */
+    void save(User user);
+
+    /**
+     * Retrieves a {@link User} by its unique institutional email address.
+     * @param email the email address to search for (must not be {@code null})
+     * @return an {@link Optional} containing the user if found, or empty otherwise
      */
     Optional<User> findByEmail(String email);
 
     /**
-     * Finds a user by their institutional code.
-     * @param institutionalCode The user's institutional code.
-     * @return An {@link Optional} containing the found user or empty if not found.
+     * Retrieves a {@link User} by its institutional code.
+     * @param code the institutional code to search for (must not be {@code null})
+     * @return an {@link Optional} containing the user if found, or empty otherwise
      */
-    Optional<User> findByInstitutionalCode(Integer institutionalCode);
+    Optional<User> findByInstitutionalCode(Integer code);
 
     /**
-     * Checks if a user exists with the given email.
-     * @param email The email to check.
-     * @return true if a user exists, false otherwise.
+     * Checks whether a {@link User} with the given email already exists.
+     * @param email the email address to check (must not be {@code null})
+     * @return {@code true} if a user exists with the given email, {@code false} otherwise
      */
-    Boolean existsByEmail(String email);
+    boolean existsByEmail(String email);
 
     /**
-     * Checks if a user exists with the given institutional code.
-     * @param institutionalCode The code to check.
-     * @return true if a user exists, false otherwise.
+     * Checks whether a {@link User} with the given institutional code already exists.
+     * @param code the institutional code to check (must not be {@code null})
+     * @return {@code true} if a user exists with the given institutional code, {@code false} otherwise
      */
-    Boolean existsByInstitutionalCode(Integer institutionalCode);
+    boolean existsByInstitutionalCode(Integer code);
 }

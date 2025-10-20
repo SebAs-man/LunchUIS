@@ -1,4 +1,4 @@
-package co.edu.uis.identityserver;
+package co.edu.uis.lunchuis;
 
 /**
  * Hello world!

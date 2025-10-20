@@ -1,9 +1,9 @@
 package co.edu.uis.lunchuis.identityservice.application.service;
 
+import co.edu.uis.lunchuis.common.dto.MessageResponse;
 import co.edu.uis.lunchuis.identityservice.application.dto.request.LoginRequest;
 import co.edu.uis.lunchuis.identityservice.application.dto.request.SignUpRequest;
 import co.edu.uis.lunchuis.identityservice.application.dto.response.JwtAuthenticationResponse;
-import co.edu.uis.lunchuis.identityservice.application.dto.response.MessageResponse;
 
 /**
  * Service interface for handling user authentication and registration.

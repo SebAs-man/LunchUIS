@@ -1,9 +1,8 @@
-package co.edu.uis.lunchuis.identityservice.domain.entity;
+package co.edu.uis.lunchuis.identityservice.infrastructure.persistence.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,20 +10,18 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * Represents a user of the LunchUIS application.
- * This entity implements Spring Security's UserDetails interface
- * for seamless integration with the authentication and authorization framework.
+ * Represents the database entity for users within the system.
+ * This class maps directly to the "users" table in PostgresSQL.
+ * It contains persistent attributes, mapping annotations, and lifecycle callbacks.
  */
 @Entity
 @Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Schema(description = "Represents a user in the system.")
-public final class User {
+@Schema(description = "Represents a user record stored in the database.")
+public final class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Schema(description = "Unique identifier of the user.",
             example = "f47ac10b-58cc-4372-a567-0e02b2c3d479")
     private UUID id;
@@ -56,7 +53,7 @@ public final class User {
     @ManyToOne(fetch = FetchType.EAGER) // EAGER fetch is fine for a single role
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     @Schema(description = "The role assigned to the user.", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Role role;
+    private RoleEntity role;
 
     @Column(nullable = false)
     @Schema(description = "Indicates whether the user is enabled or disabled.",
@@ -70,15 +67,4 @@ public final class User {
     @Column(name = "updated_at")
     @Schema(description = "Timestamp when the user was last updated.")
     private Instant updatedAt;
-
-    @PrePersist
-    public void onCreate() {
-        this.enabled = true;
-        this.createdAt = Instant.now();
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        this.updatedAt = Instant.now();
-    }
 }
