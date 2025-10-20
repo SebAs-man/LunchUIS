@@ -26,7 +26,9 @@ public class UserDetailsImpl implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName().name()));
+        return Collections.singletonList(new SimpleGrantedAuthority(
+                user.getRole().getName().name())
+        );
     }
 
     // --- Getters ---
@@ -38,7 +40,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return String.valueOf(user.getInstitutionalCode());
     }
 
     @Override public boolean isAccountNonExpired() { return true; }

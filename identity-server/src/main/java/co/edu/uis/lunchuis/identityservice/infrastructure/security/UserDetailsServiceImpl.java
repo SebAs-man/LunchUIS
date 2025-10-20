@@ -1,5 +1,6 @@
 package co.edu.uis.lunchuis.identityservice.infrastructure.security;
 
+import co.edu.uis.lunchuis.common.exception.InvalidRequestException;
 import co.edu.uis.lunchuis.identityservice.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,18 +18,26 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
-    private final UserDetailsMapper userDetailsMapper; // Un mapper que crearemos ahora
+    private final UserDetailsMapper userDetailsMapper;
 
     /**
-     * Loads the user by their email address.
-     * @param username The email address of the user to load.
-     * @return The {@link UserDetailsImpl} for Spring Security.
-     * @throws UsernameNotFoundException if no user is found with the given email.
+     * Loads a user by their institutional code.
+     * This is used by Spring Security during authentication and for JWT validation.
+     * @param username The institutional code as a string (Spring Security uses the "username" concept)
+     * @return The {@link UserDetailsImpl} for Spring Security
+     * @throws UsernameNotFoundException if no user is found with the given institutional code
      */
     @Override
     public UserDetailsImpl loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByInstitutionalCode(Integer.valueOf(username))
-                .map(userDetailsMapper::toUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+        try{
+            int code = Integer.parseInt(username);;
+            return userRepository.findByInstitutionalCode(code)
+                    .map(userDetailsMapper::toUserDetails)
+                    .orElseThrow(() ->
+                            new UsernameNotFoundException("User not found with institutional code: " + username)
+                    );
+        } catch (NumberFormatException e) {
+            throw new InvalidRequestException("Invalid institutional code: " + username);
+        }
     }
 }

@@ -1,5 +1,6 @@
-package co.edu.uis.lunchuis.identityservice.infrastructure.security;
+package co.edu.uis.lunchuis.identityservice.infrastructure.config;
 
+import co.edu.uis.lunchuis.identityservice.infrastructure.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,22 +16,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Central configuration class for Spring Security in the Identity Service.
- * This class enables web security and defines all the necessary beans for
- * authentication and authorization. It is configured specifically for a
- * stateless (JWT-based) REST API, disabling CSRF and session management.
+ * Spring Security configuration class for the LunchUIS Identity Service.
+ * Configures authentication and authorization rules for all HTTP requests.
+ * Uses JWT tokens for stateless authentication and a custom {@link UserDetailsService}
+ * to authenticate users based on their institutional code.
  */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    /**
-     * Custom service for loading user-specific data.
-     * Injected via constructor.
-     */
     private final UserDetailsService userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     /**
      * Configures the main security filter chain for the application.
@@ -62,11 +61,26 @@ public class SecurityConfig {
                 )
                 // 3. Set session management to STATELESS
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-                // En el futuro, aquí se añadirá el filtro de validación de JWT
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 4. Set authentication provider
+                .authenticationProvider(authenticationProvider())
+                // 5. Add JWT filter before UsernamePasswordAuthenticationFilter
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    /**
+     * Configures the {@link AuthenticationProvider} for Spring Security.
+     * Uses {@link DaoAuthenticationProvider} with a custom {@link UserDetailsService} and {@link PasswordEncoder}.
+     * This allows Spring Security to authenticate users based on institutional code and hashed passwords.
+     * @return The configured {@link AuthenticationProvider}.
+     */
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
     /**
