@@ -1,0 +1,26 @@
+# Define the services (containers)
+services:
+  # Service name: 'postgres'
+  postgres:
+    # Use the official PostgreSQL image from Docker Hub
+    image: postgres
+    # Name of the container that will be created
+    container_name: lunchuis-db
+    # Environment variables for database configuration
+    environment:
+      POSTGRES_USER: lunchuis_user
+      POSTGRES_PASSWORD: 1l5u9n3c5h7U0sI
+      POSTGRES_DB: lunchuis_db
+    # Port mapping: host_port:container_port
+    # Makes the database accessible from our local machine on port 5432
+    ports:
+      - "5432:5432"
+    # Volume to persist data even when the container is stopped or removed
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    # Restart policy
+    restart: unless-stopped
+
+# Define the named volume for data persistence
+volumes:
+  postgres-data:
