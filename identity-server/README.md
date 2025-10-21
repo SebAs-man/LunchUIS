@@ -1,6 +1,9 @@
-# 🚀 Identity Service
+# 🔐 Identity Service
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=Spring-Security&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![Maven](https://img.shields.io/badge/apache_maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
 
 The Identity Service is the security cornerstone of the **LunchUIS** platform. It handles all aspects of user management, authentication, and authorization using a stateless JWT-based approach.
 
@@ -30,3 +33,31 @@ Here are the primary public endpoints provided by this service:
 ### Class Diagram (Conceptual)
 
 This diagram shows the key classes and their relationships across the main architectural layers.
+![Class Diagram](doc/diagrams/class.png)
+
+### Sequence Diagram: User Registration Flow
+
+This diagram illustrates the step-by-step process of a new user signing up.
+![Sequence Diagram](doc/diagrams/seq.png)
+
+---
+
+## ⚙️ Technology Stack
+* **Framework**: Spring Boot 3
+* **Security**: Spring Security 6
+* **Database**: PostgreSQL (managed via Spring Data JPA)
+* **Authentication**: JSON Web Tokens (JWT)
+* **Mapping**: MapStruct
+* **API Docs**: SpringDoc (Swagger UI)
+* **Build Tool**: Maven
+
+---
+
+## 🛠️ Setup and Running
+1. **Prerequisites**: Ensure you have Java 21+, Docker, and Docker Compose installed.
+2. **Start Database**: From the project root, run docker-compose up -d to start the PostgreSQL container.
+3. **Run the Application**: Execute the main method in IdentityServiceApplication.java from your IDE.
+4. **API Access**: The service will be available at http://localhost:8081.
+5. **Swagger UI**: You can explore the API documentation at http://localhost:8081/swagger-ui.html.
+
+> **Security Note**: The JWT secret key and expiration time are configured in the application.properties file. For a production environment, these should be managed via external configuration or environment variables.
