@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetailsImpl loadUserByUsername(String username) throws UsernameNotFoundException {
         try{
-            int code = Integer.parseInt(username);;
+            int code = Integer.parseInt(username);
             return userRepository.findByInstitutionalCode(code)
                     .map(userDetailsMapper::toUserDetails)
                     .orElseThrow(() ->

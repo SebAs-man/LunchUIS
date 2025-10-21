@@ -19,10 +19,10 @@ The Identity Service is the security cornerstone of the **LunchUIS** platform. I
 
 Here are the primary public endpoints provided by this service:
 
-| Method | Path                | Description                                     | Success Response |
-| :----- | :------------------ | :---------------------------------------------- | :--------------- |
-| `POST` | `/api/auth/signup`  | Registers a new user with the default `STUDENT` role. | `201 Created`    |
-| `POST` | `/api/auth/login`   | Authenticates a user and returns a JWT.         | `200 OK`         |
+| Method | Path               | Description                                           | Success Response |
+|:-------|:-------------------|:------------------------------------------------------|:-----------------|
+| `POST` | `/api/auth/signup` | Registers a new user with the default `STUDENT` role. | `201 Created`    |
+| `POST` | `/api/auth/login`  | Authenticates a user and returns a JWT.               | `200 OK`         |
 
 ---
 

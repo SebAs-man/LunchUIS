@@ -32,3 +32,5 @@ out/
 .env
 application-*.yml
 application-*.properties
+# BUT keep the example
+!.env.example
