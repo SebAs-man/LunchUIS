@@ -43,6 +43,8 @@ public record SignUpRequest (
         String email,
         @Schema(description = "User's password. Must be at least 8 characters long.",
                 example = "password123", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",
+                message = "Password must contain at least one digit, one lowercase, one uppercase, one special character, and no whitespace.")
         @NotBlank(message = "Password cannot be blank.")
         @Size(min = 8, message = "Password must be at least 8 characters long.")
         String password

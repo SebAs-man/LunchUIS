@@ -1,6 +1,7 @@
 package co.edu.uis.lunchuis.identityservice.application.service;
 
 import co.edu.uis.lunchuis.common.dto.MessageResponse;
+import co.edu.uis.lunchuis.identityservice.application.dto.request.AdminUserCreationRequest;
 import co.edu.uis.lunchuis.identityservice.application.dto.request.LoginRequest;
 import co.edu.uis.lunchuis.identityservice.application.dto.request.SignUpRequest;
 import co.edu.uis.lunchuis.identityservice.application.dto.response.JwtAuthenticationResponse;
@@ -22,4 +23,11 @@ public interface AuthenticationService {
      * @return A DTO containing the JWT access token.
      */
     JwtAuthenticationResponse login(LoginRequest request);
+
+    /**
+     * Creates a new user with a specified role, intended for administrative use.
+     * @param request The DTO containing user details and the desired role.
+     * @return A message response indicating the result of the user creation.
+     */
+    MessageResponse createAdminUser(AdminUserCreationRequest request);
 }
