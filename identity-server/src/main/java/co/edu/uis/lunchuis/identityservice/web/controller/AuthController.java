@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Implements REST endpoints for managing user access.
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication", description = "Endpoints for user registration and login.")
 public class AuthController {

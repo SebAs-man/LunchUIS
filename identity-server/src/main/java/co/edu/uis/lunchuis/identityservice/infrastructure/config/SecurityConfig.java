@@ -51,10 +51,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers(
-                                "/api/auth/**", // login/registration endpoints
-                                "/swagger-ui/**", // Swagger JS and CSS
-                                "/v3/api-docs/**", // El JSON de la API
-                                "/swagger-ui.html"
+                                "/auth/**", // login/registration endpoints
+                                "/swagger-ui/**", // Swagger UI assets (JS, CSS, etc.)
+                                "/auth/api-docs/**", // The API JSON (based on springdoc.api-docs.path=auth/api-docs)
+                                "/swagger-ui.html", // Swagger UI HTML page
+                                "/actuator/**" // Temporalmente permitimos Actuator para depuración
                         ).permitAll()
                         // All other requests must be authenticated
                         .anyRequest().authenticated()

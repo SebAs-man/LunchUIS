@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -76,7 +77,7 @@ class TestController {
                     )
             )
     })
-    @GetMapping("/api/v1/test")
+    @GetMapping("test")
     public String getSecuredData() {
         return "¡Si ves esto, la seguridad falló!";
     }
@@ -130,7 +131,7 @@ class TestController {
                     )
             )
     })
-    @GetMapping("api/auth/hello")
+    @GetMapping("auth/hello")
     public ResponseEntity<String> sayHello() {
         // Get the authenticated user's details from the security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

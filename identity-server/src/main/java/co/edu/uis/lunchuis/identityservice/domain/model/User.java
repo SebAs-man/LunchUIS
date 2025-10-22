@@ -38,8 +38,8 @@ public final class User {
      * @param password          the password for the user account (must not be {@code null})
      * @param enabled           the activation status of the user; defaults to {@code true} if {@code null}
      */
-    public User(UUID id, Role role, String firstName,
-                String lastName, Integer institutionalCode, String email, String password,
+    public User(UUID id, Role role, String firstName, String lastName,
+                Integer institutionalCode, String email, String password,
                 Boolean enabled) {
         this.id = (id != null) ? id : UUID.randomUUID();
         this.createdAt = Instant.now();
