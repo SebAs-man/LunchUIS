@@ -15,7 +15,6 @@ import co.edu.uis.lunchuis.identityservice.domain.model.Role;
 import co.edu.uis.lunchuis.identityservice.domain.model.User;
 import co.edu.uis.lunchuis.identityservice.domain.repository.RoleRepository;
 import co.edu.uis.lunchuis.identityservice.domain.repository.UserRepository;
-import co.edu.uis.lunchuis.identityservice.infrastructure.persistence.entity.RoleEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
@@ -25,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -65,13 +65,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Operation(summary = "Register a new user",
             description = "Registers a new user with the STUDENT role and stores it in the database")
     public MessageResponse signup(SignUpRequest request) {
-        // 1. Check if a user already exists & Find the default role for a new user (STUDENT)
-        Role userRole = this.verifyRole(request.email(), request.institutionalCode(), RoleType.STUDENT);
+        // 1. Verify whether the unique variables and role already exist
+        Role userRole = this.verifyUser(request.institutionalCode(), request.email(), RoleType.STUDENT);
         // 2. Create a new user entity from the request DTO
         User user = userMapper.toDomain(request);
         user.setRole(userRole);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         // 3. Save the new user to the database
         userRepository.save(user);
 
@@ -126,14 +125,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Operation(summary = "Create a new user by admin",
             description = "Creates a new user with a specified role, intended for administrative use.")
     public MessageResponse signupadmin(SignUpAdminRequest request) {
-        // 1. Check if a user already exists & Find the specified role
-        Role userRole = this.verifyRole(request.email(), request.institutionalCode(), request.roleType());
-
+        // 1. Verify whether the unique variables and role already exist
+        Role userRole = this.verifyUser(request.institutionalCode(), request.email(), request.roleType());
         // 2. Create a new user entity from the request DTO
         User user = userMapper.toDomain(request);
         user.setRole(userRole);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         // 3. Save the new user to the database
         userRepository.save(user);
 
@@ -141,25 +138,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     /**
-     * Verifies if a role exists in the system and checks for uniqueness of the user's email
-     * and institutional code. If the email or code already exists, an exception is thrown.
-     * If the specified role type does not exist, an exception is also thrown.
+     * Verifies the uniqueness of a user by checking for existing entries with the provided
+     * email and institutional code and retrieves the role associated with the user.
+     * If the `roleType` is null, assigns a default role.
+     * @param institutionalCode the institutional code of the user to be verified
      * @param email the email address of the user to be verified
-     * @param code the institutional code of the user to be verified
-     * @param roleType the type of role to be retrieved
-     * @return the {@link Role} associated with the specified role type
-     * @throws DuplicateResourceException if a user with the provided email or institutional code already exists
-     * @throws ResourceNotFoundException if the specified role type is not found in the system
+     * @param roleType the type of role to be assigned to the user; if null, a default role is assigned
+     * @return the associated {@link Role} object for the user
+     * @throws DuplicateResourceException if a user with the given email or institutional code already exists
+     * @throws ResourceNotFoundException if the specified role type does not exist
      */
-    private Role verifyRole(String email, Integer code, RoleType roleType){
+    private Role verifyUser(Integer institutionalCode, String email, RoleType roleType){
         // 1. Check if a user already exists with the given email or institutional code
         if (userRepository.existsByEmail(email)) {
             throw new DuplicateResourceException("User", "email", email);
         }
-        if (userRepository.existsByInstitutionalCode(code)) {
-            throw new DuplicateResourceException("User", "institutionalCode", code);
+        if (userRepository.existsByInstitutionalCode(institutionalCode)) {
+            throw new DuplicateResourceException("User", "institutionalCode", institutionalCode);
         }
-        // 2. Find the specified role
-        return roleRepository.findByName(roleType).orElse(null);
+        // 2. Assign default role if null
+        RoleType typeRole = (roleType == null) ? RoleType.STUDENT :roleType;
+        // 3. Search for the role
+        return roleRepository.findByName(typeRole)
+                .orElseThrow(() -> new ResourceNotFoundException("Role", "name", typeRole.name()));
     }
 }
