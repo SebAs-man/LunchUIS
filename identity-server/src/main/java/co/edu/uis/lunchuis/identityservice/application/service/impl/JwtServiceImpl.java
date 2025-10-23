@@ -29,14 +29,21 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.expiration}")
     private long expiration;
 
+    /**
+     * Extracts the username embedded in the provided JWT token.
+     * @param token the JWT token from which the username is to be extracted
+     * @return the username (institutional code) extracted from the token
+     */
     @Override
-    @Operation(summary = "Extract username from JWT", description = "Extracts the institutional code from the given JWT token")
+    @Operation(summary = "Extract username from JWT",
+            description = "Extracts the institutional code from the given JWT token")
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     @Override
-    @Operation(summary = "Generate JWT token", description = "Generates a JWT token for the specified user")
+    @Operation(summary = "Generate JWT token",
+            description = "Generates a JWT token for the specified user")
     public String generateToken(User user) {
         return Jwts.builder()
                 .subject(String.valueOf(user.getInstitutionalCode()))
@@ -47,7 +54,8 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    @Operation(summary = "Validate JWT token", description = "Checks if the JWT token is valid and belongs to the given user")
+    @Operation(summary = "Validate JWT token",
+            description = "Checks if the JWT token is valid and belongs to the given user")
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);

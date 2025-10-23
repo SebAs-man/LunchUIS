@@ -4,7 +4,7 @@ import co.edu.uis.lunchuis.common.dto.MessageResponse;
 import co.edu.uis.lunchuis.common.enums.RoleType;
 import co.edu.uis.lunchuis.common.exception.DuplicateResourceException;
 import co.edu.uis.lunchuis.common.exception.ResourceNotFoundException;
-import co.edu.uis.lunchuis.identityservice.application.dto.request.AdminUserCreationRequest;
+import co.edu.uis.lunchuis.identityservice.application.dto.request.SignUpAdminRequest;
 import co.edu.uis.lunchuis.identityservice.application.dto.request.LoginRequest;
 import co.edu.uis.lunchuis.identityservice.application.dto.request.SignUpRequest;
 import co.edu.uis.lunchuis.identityservice.application.dto.response.JwtAuthenticationResponse;
@@ -15,6 +15,7 @@ import co.edu.uis.lunchuis.identityservice.domain.model.Role;
 import co.edu.uis.lunchuis.identityservice.domain.model.User;
 import co.edu.uis.lunchuis.identityservice.domain.repository.RoleRepository;
 import co.edu.uis.lunchuis.identityservice.domain.repository.UserRepository;
+import co.edu.uis.lunchuis.identityservice.infrastructure.persistence.entity.RoleEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
@@ -23,6 +24,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * This class provides the implementation of the {@link AuthenticationService} interface.
@@ -35,7 +38,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-@Tag(name = "Authentication Service", description = "Service for handling user authentication operations")
+@Tag(name = "Authentication Service",
+        description = "Service for handling user authentication operations")
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -58,7 +62,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     @Transactional
-    @Operation(summary = "Register a new user", description = "Registers a new user with the STUDENT role and stores it in the database")
+    @Operation(summary = "Register a new user",
+            description = "Registers a new user with the STUDENT role and stores it in the database")
     public MessageResponse signup(SignUpRequest request) {
         // 1. Check if a user already exists & Find the default role for a new user (STUDENT)
         Role userRole = this.verifyRole(request.email(), request.institutionalCode(), RoleType.STUDENT);
@@ -108,7 +113,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * Creates a new user with a specified role. This method is intended for use by administrators.
      * It verifies the uniqueness of the user's email and institutional code, assigns the specified
      * role to the user, securely encrypts their password, and saves the user to the database.
-     * @param request an instance of {@link AdminUserCreationRequest} containing the details
+     * @param request an instance of {@link SignUpAdminRequest} containing the details
      *                for the new admin-created user, such as email, institutional code,
      *                role type, and password.
      * @return a {@link MessageResponse} indicating successful creation of the user by the admin.
@@ -118,8 +123,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     @Transactional
-    @Operation(summary = "Create a new user by admin", description = "Creates a new user with a specified role, intended for administrative use.")
-    public MessageResponse createAdminUser(AdminUserCreationRequest request) {
+    @Operation(summary = "Create a new user by admin",
+            description = "Creates a new user with a specified role, intended for administrative use.")
+    public MessageResponse signupadmin(SignUpAdminRequest request) {
         // 1. Check if a user already exists & Find the specified role
         Role userRole = this.verifyRole(request.email(), request.institutionalCode(), request.roleType());
 
@@ -153,9 +159,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (userRepository.existsByInstitutionalCode(code)) {
             throw new DuplicateResourceException("User", "institutionalCode", code);
         }
-
         // 2. Find the specified role
-        return roleRepository.findByName(roleType)
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "name",roleType.name()));
+        return roleRepository.findByName(roleType).orElse(null);
     }
 }

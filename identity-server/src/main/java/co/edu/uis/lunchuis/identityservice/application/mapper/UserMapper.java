@@ -1,6 +1,6 @@
 package co.edu.uis.lunchuis.identityservice.application.mapper;
 
-import co.edu.uis.lunchuis.identityservice.application.dto.request.AdminUserCreationRequest;
+import co.edu.uis.lunchuis.identityservice.application.dto.request.SignUpAdminRequest;
 import co.edu.uis.lunchuis.identityservice.application.dto.request.SignUpRequest;
 import co.edu.uis.lunchuis.identityservice.domain.model.User;
 import org.mapstruct.Mapper;
@@ -20,9 +20,9 @@ public interface UserMapper {
     User toDomain(SignUpRequest request);
 
     /**
-     * Maps an {@link AdminUserCreationRequest} DTO to a {@link User} domain object.
-     * @param request the {@link AdminUserCreationRequest} from an admin
+     * Maps an {@link SignUpAdminRequest} DTO to a {@link User} domain object.
+     * @param request the {@link SignUpAdminRequest} from an admin
      * @return a {@link User} object populated with data from the request
      */
-    User toDomain(AdminUserCreationRequest request);
+    User toDomain(SignUpAdminRequest request);
 }

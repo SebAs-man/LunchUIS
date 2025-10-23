@@ -109,7 +109,7 @@ public final class User {
     }
     public void setRole(Role role) {
         if(role == null){
-            role = new Role(null, RoleType.STUDENT);
+            role = new Role(null, null);
         }
         this.role = role;
     }

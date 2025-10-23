@@ -11,7 +11,7 @@ import lombok.Builder;
  */
 @Builder
 @Schema(description = "Request DTO for creating a new user by an administrator.")
-public record AdminUserCreationRequest(
+public record SignUpAdminRequest(
         @NotBlank(message = "First name cannot be blank")
         @Schema(description = "User's first name.", example = "Admin")
         String firstName,
@@ -33,7 +33,6 @@ public record AdminUserCreationRequest(
                 message = "Password must contain at least one digit, one lowercase, one uppercase, one special character, and no whitespace.")
         @Schema(description = "User's password.", example = "Password123!")
         String password,
-        @NotNull(message = "Role cannot be null")
         @Schema(description = "The role to assign to the new user.", example = "STUDENT")
         RoleType roleType
 ) {}

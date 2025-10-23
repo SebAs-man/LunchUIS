@@ -22,12 +22,13 @@ public class UserDetailsImpl implements UserDetails {
     /**
      * Returns the authorities (roles) granted to the user.
      * We map our domain Role to Spring's SimpleGrantedAuthority.
+     * The role name must be prefixed with "ROLE_" for hasRole() expressions to work.
      * @return A collection containing the user's role.
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(
-                user.getRole().name().name())
+                "ROLE_" + user.getRole().name().name())
         );
     }
 
