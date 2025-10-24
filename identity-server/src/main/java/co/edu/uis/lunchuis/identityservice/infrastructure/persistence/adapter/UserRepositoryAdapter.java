@@ -15,6 +15,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * UserRepositoryAdapter serves as an adapter implementation of the {@link UserRepository}
+ * interface. It acts as a bridge between the domain-specific {@link UserRepository} and
+ * the infrastructure-specific {@link JpaUserRepository}, allowing the domain layer
+ * to remain agnostic of the underlying persistence logic.
+ * This adapter leverages {@link UserEntityMapper} to map between the domain model
+ * {@link User} and the persistence entity {@link UserEntity}.
+ */
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryAdapter implements UserRepository {

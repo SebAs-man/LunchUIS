@@ -78,6 +78,4 @@ public class AdminController {
         MessageResponse response = authenticationService.signupadmin(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
-
 }

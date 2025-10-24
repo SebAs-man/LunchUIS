@@ -14,13 +14,12 @@ import java.util.UUID;
  */
 public interface ComboRepository {
     /**
-     * Persists the specified Combo entity in the repository. This method can be
-     * used to save a new Combo or update an existing one if it already exists.
-     * @param combo the Combo entity to be saved. Must not be null and should
-     *              contain valid details such as name, description, price, and
-     *              other required fields.
+     * Persists the given Combo entity into the repository.
+     * If the entity already exists, it will be updated; otherwise, it will be created.
+     * @param combo the Combo entity to be saved. Must not be null.
+     * @return the persisted Combo entity after the save operation.
      */
-    void save(Combo combo);
+    Combo save(Combo combo);
 
     /**
      * Retrieves a Combo entity by its unique identifier.

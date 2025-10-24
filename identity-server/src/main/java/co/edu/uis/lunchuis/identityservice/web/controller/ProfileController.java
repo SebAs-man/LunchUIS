@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
  * Provides endpoints for users to manage their own profile information.
  */
 @RestController
-@RequestMapping("/profile")
+@RequestMapping("auth/profile")
 @RequiredArgsConstructor
 @Tag(name = "User Profile", description = "Endpoints for user profile management")
 @SecurityRequirement(name = "bearerAuth")

@@ -1,9 +1,11 @@
 package co.edu.uis.lunchuis.comboservice.application.mapper;
 
 import co.edu.uis.lunchuis.comboservice.application.dto.request.ComboRequestDTO;
+import co.edu.uis.lunchuis.comboservice.application.dto.response.ComboResponseDTO;
 import co.edu.uis.lunchuis.comboservice.domain.model.Combo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 /**
  * ComboMapper is a MapStruct interface responsible for mapping data between
@@ -22,5 +24,22 @@ public interface ComboMapper {
      * @return a Combo domain object created from the provided ComboRequestDTO
      */
     @Mapping(target = "validTo", ignore = true)
+    @Mapping(target = "availableQuota", ignore = true)
     Combo toDomain(ComboRequestDTO request);
+
+    /**
+     * Maps a {@link Combo} domain model to a {@link ComboResponseDTO}.
+     * @param combo The {@link Combo} domain model.
+     * @return The mapped {@link ComboResponseDTO}.
+     */
+    ComboResponseDTO toResponse(Combo combo);
+
+    /**
+     * Updates an existing {@link Combo} domain model from a {@link ComboRequestDTO}.
+     * @param dto   The DTO containing the updated data.
+     * @param model The domain model entity to be updated.
+     */
+    @Mapping(target = "availableQuota", ignore = true)
+    @Mapping(target = "validTo", ignore = true)
+    void updateModelFromDto(ComboRequestDTO dto, @MappingTarget Combo model);
 }
