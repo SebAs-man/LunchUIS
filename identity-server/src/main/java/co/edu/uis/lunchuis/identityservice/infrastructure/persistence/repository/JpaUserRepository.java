@@ -1,9 +1,11 @@
 package co.edu.uis.lunchuis.identityservice.infrastructure.persistence.repository;
 
+import co.edu.uis.lunchuis.identityservice.infrastructure.persistence.entity.RoleEntity;
 import co.edu.uis.lunchuis.identityservice.infrastructure.persistence.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,6 +28,20 @@ public interface JpaUserRepository extends JpaRepository<UserEntity, UUID> {
      * @return An {@link Optional} containing the found user or empty if not found.
      */
     Optional<UserEntity> findByInstitutionalCode(Integer institutionalCode);
+
+    /**
+     * Finds users by their role.
+     * @param role The role to search for.
+     * @return A list of users with the specified role.
+     */
+    List<UserEntity> findByRole(RoleEntity role);
+
+    /**
+     * Finds users by their enabled status.
+     * @param enabled The enabled status to search for.
+     * @return A list of users with the specified enabled status.
+     */
+    List<UserEntity> findByEnabled(Boolean enabled);
 
     /**
      * Checks if a user exists with the given email.
