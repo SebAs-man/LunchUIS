@@ -26,21 +26,25 @@ public record SignUpRequest (
                 requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "First name cannot be blank.")
         String firstName,
+
         @Schema(description = "User's last name.", example = "Beltrán",
                 requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "Last name cannot be blank.")
         String lastName,
+
         @Schema(description = "User's unique institutional code.", example = "2180001",
                 requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull(message = "Institutional code cannot be null.")
         @Min(value = 1000000, message = "Institutional code must be at least 7 digits")
         @Max(value = 99999999, message = "Institutional code must be at most 8 digits")
         Integer institutionalCode,
+
         @Schema(description = "User's unique institutional email.", example = "carlos.beltran@uis.edu.co",
                 requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "Email cannot be blank.")
         @Email(message = "Email should be valid.")
         String email,
+
         @Schema(description = "User's password. Must be at least 8 characters long.",
                 example = "password123", requiredMode = Schema.RequiredMode.REQUIRED)
         @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",

@@ -1,7 +1,5 @@
 package co.edu.uis.lunchuis.identityservice.domain.model;
 
-import co.edu.uis.lunchuis.common.enums.RoleType;
-
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
@@ -87,16 +85,16 @@ public final class User {
     // --- Setters ---
 
     public void setFirstName(String firstName) {
-        this.firstName = Objects.requireNonNull(firstName);
+        this.firstName = Objects.requireNonNull(firstName, "First name cannot be null");
     }
     public void setLastName(String lastName) {
-        this.lastName = Objects.requireNonNull(lastName);
+        this.lastName = Objects.requireNonNull(lastName, "Last name cannot be null");
     }
     public void setInstitutionalCode(Integer institutionalCode) {
-        this.institutionalCode = Objects.requireNonNull(institutionalCode);
+        this.institutionalCode = Objects.requireNonNull(institutionalCode, "Institutional code cannot be null");
     }
     public void setEmail(String email) {
-        this.email = Objects.requireNonNull(email);
+        this.email = Objects.requireNonNull(email, "Email cannot be null");
     }
     public void setEnabled(Boolean enabled) {
         if(enabled == null){
@@ -105,12 +103,9 @@ public final class User {
         this.enabled = enabled;
     }
     public void setPassword(String password) {
-        this.password = Objects.requireNonNull(password);
+        this.password = Objects.requireNonNull(password, "Password cannot be null");
     }
     public void setRole(Role role) {
-        if(role == null){
-            role = new Role(null, null);
-        }
         this.role = role;
     }
     public void setUpdatedAt(Instant updatedAt) {

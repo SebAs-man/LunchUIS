@@ -2,8 +2,9 @@ package co.edu.uis.lunchuis.comboservice.domain.model;
 
 
 import co.edu.uis.lunchuis.common.enums.ComboStatus;
+import co.edu.uis.lunchuis.common.enums.ComboType;
 
-import java.time.Instant;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -17,27 +18,39 @@ public final class Combo {
     private final UUID id;
     private String name;
     private String description;
-    private Double price;
-    private LocalDate availableDate;
-    private Integer totalStock;
-    private Integer availableStock;
+    private BigDecimal price;
     private ComboStatus status;
-    private String imageUrl;
-    private final Instant createdAt;
-    private Instant updatedAt;
+    private final ComboType type;
+    private Integer totalQuota;
+    private Integer availableQuota;
+    private LocalDate validFrom;
+    private LocalDate validTo;
 
-    public Combo(UUID id, Integer totalStock, String name, String description,
-                 Double price, LocalDate availableDate, String imageUrl,
-                 ComboStatus status) {
+    /**
+     * Constructs an instance of the Combo class.
+     * @param id            The unique identifier for the combo. If null, a new UUID is generated.
+     * @param type          The type of the combo, represented by the ComboType enum.
+     * @param name          The name of the combo.
+     * @param description   A brief description of the combo.
+     * @param price         The price of the combo.
+     * @param status        The status of the combo, represented by the ComboStatus enum.
+     * @param totalQuota    The total quota of the combo available.
+     * @param availableQuota The number of quotas still available.
+     * @param validFrom     The start date from which the combo is valid.
+     * @param validTo       The end date until which the combo is valid.
+     */
+    public Combo(UUID id, ComboType type, String name, String description, BigDecimal price,
+                 ComboStatus status, Integer totalQuota, Integer availableQuota, LocalDate validFrom,
+                 LocalDate validTo) {
         this.id = (id != null) ? id : UUID.randomUUID();
-        this.createdAt = Instant.now();
-        setTotalStock(totalStock);
+        this.type = Objects.requireNonNull(type, "Status cannot be null");
         setName(name);
         setDescription(description);
         setPrice(price);
-        setAvailableDate(availableDate);
-        setImageUrl(imageUrl);
-        setStatus(status);
+        setTotalQuota(totalQuota);
+        setAvailableQuota(availableQuota);
+        setValidFrom(validFrom);
+        setValidTo(validTo);
     }
 
     // --- Getters ---
@@ -51,64 +64,55 @@ public final class Combo {
     public String getDescription() {
         return description;
     }
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
-    }
-    public LocalDate getAvailableDate() {
-        return availableDate;
-    }
-    public Integer getTotalStock() {
-        return totalStock;
-    }
-    public Integer getAvailableStock() {
-        return availableStock;
     }
     public ComboStatus getStatus() {
         return status;
     }
-    public String getImageUrl() {
-        return imageUrl;
+    public ComboType getType() {
+        return type;
     }
-    public Instant getCreatedAt() {
-        return createdAt;
+    public Integer getTotalQuota() {
+        return totalQuota;
     }
-    public Instant getUpdatedAt() {
-        return updatedAt;
+    public Integer getAvailableQuota() {
+        return availableQuota;
+    }
+    public LocalDate getValidFrom() {
+        return validFrom;
+    }
+    public LocalDate getValidTo() {
+        return validTo;
     }
 
     // --- Setters ---
 
     public void setName(String name) {
-        this.name = Objects.requireNonNull(name);
+        this.name = Objects.requireNonNull(name, "Name cannot be null");
     }
     public void setDescription(String description) {
-        this.description = Objects.requireNonNull(description);
+        this.description = description;
     }
-    public void setPrice(Double price) {
-        this.price = Objects.requireNonNull(price);
-    }
-    public void setAvailableDate(LocalDate availableDate) {
-        this.availableDate = Objects.requireNonNull(availableDate);
-    }
-    public void setTotalStock(Integer totalStock) {
-        this.totalStock = Objects.requireNonNull(totalStock);
-    }
-    public void setAvailableStock(Integer availableStock) {
-        if(availableStock == null){
-            availableStock = this.totalStock;
-        }
-        this.availableStock = availableStock;
+    public void setPrice(BigDecimal price) {
+        this.price = Objects.requireNonNull(price, "Price cannot be null");
     }
     public void setStatus(ComboStatus status) {
-        if(status == null){
-            status = ComboStatus.AVAILABLE;
+        this.status = Objects.requireNonNull(status, "Status cannot be null");
+    }
+    public void setTotalQuota(Integer totalQuota) {
+        this.totalQuota = Objects.requireNonNull(totalQuota, "Total quota cannot be null");
+    }
+    public void setAvailableQuota(Integer availableQuota) {
+        if(availableQuota == null){
+            availableQuota = this.totalQuota;
         }
-        this.status = status;
+        this.availableQuota = availableQuota;
     }
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setValidFrom(LocalDate validFrom) {
+        this.validFrom = Objects.requireNonNull(validFrom, "Valid from cannot be null");
     }
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setValidTo(LocalDate validTo) {
+        this.validTo = validTo;
     }
 }

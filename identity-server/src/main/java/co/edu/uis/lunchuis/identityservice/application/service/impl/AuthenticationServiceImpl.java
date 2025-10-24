@@ -24,9 +24,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 /**
  * This class provides the implementation of the {@link AuthenticationService} interface.
  * It handles operations related to user authentication such as user registration,

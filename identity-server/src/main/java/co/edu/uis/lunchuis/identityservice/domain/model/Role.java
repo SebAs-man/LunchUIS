@@ -16,7 +16,6 @@ import java.util.UUID;
 public record Role(UUID id, RoleType name) {
     /**
      * Constructs a new {@code Role} with the given parameters.
-     *
      * @param id   the unique identifier of the role (must not be {@code null})
      * @param name the specific role name (must not be {@code null})
      */
