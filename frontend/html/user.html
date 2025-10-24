@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Usuario - LunchUIS</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-image" id="backgroundImage"></div>
+
+    <div class="container">
+        <div class="user-card">
+            <div class="user-header">
+                <h1>Panel de Usuario</h1>
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <button id="logoutBtn" class="logout-btn">Cerrar Sesión</button>
+                </div>
+            </div>
+            
+            <div class="user-content">
+                <div class="welcome-section">
+                    <h2>¡Bienvenido!</h2>
+                    <p>Aquí puedes gestionar tus combos y pedidos</p>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>🍱 Ver Combos</h3>
+                        <p>Explora los combos disponibles</p>
+                        <button class="btn-primary" onclick="showCombos()">Ver Combos</button>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🛒 Mi Carrito</h3>
+                        <p>Gestiona tus compras</p>
+                        <button class="btn-primary" onclick="showCart()">Ver Carrito</button>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>📋 Mis Pedidos</h3>
+                        <p>Revisa tu historial</p>
+                        <button class="btn-primary" onclick="showOrders()">Ver Pedidos</button>
+                    </div>
+                </div>
+                
+                <div id="contentArea" class="content-area">
+                    <!-- El contenido se cargará aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/combos-api.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticación
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || currentUser.type !== 'user') {
+                alert('No tienes permisos de usuario');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Mostrar información del usuario
+            document.getElementById('userName').textContent = currentUser.fullName;
+            
+            // Configurar logout
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                    logout();
+                }
+            });
+            
+            // Cargar imagen de fondo
+            const bgElement = document.getElementById('backgroundImage');
+            const bgImageUrl = '../img/fondo.jpg';
+            
+            const img = new Image();
+            img.src = bgImageUrl;
+            
+            img.onload = function() {
+                bgElement.style.backgroundImage = `url('${bgImageUrl}')`;
+            };
+            
+            img.onerror = function() {
+                bgElement.style.background = 'var(--gradient-fallback)';
+            };
+        });
+
+        function showCombos() {
+            const contentArea = document.getElementById('contentArea');
+            contentArea.innerHTML = `
+                <div class="combos-section">
+                    <h3>Combos Disponibles</h3>
+                    <div id="combosList" class="combos-grid">
+                        <p>Cargando combos...</p>
+                    </div>
+                </div>
+            `;
+            
+            loadUserCombos();
+        }
+
+        function showCart() {
+            const contentArea = document.getElementById('contentArea');
+            contentArea.innerHTML = `
+                <div class="cart-section">
+                    <h3>Mi Carrito</h3>
+                    <div id="cartList" class="cart-items">
+                        <p>Tu carrito está vacío</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showOrders() {
+            const contentArea = document.getElementById('contentArea');
+            contentArea.innerHTML = `
+                <div class="orders-section">
+                    <h3>Mis Pedidos</h3>
+                    <div id="ordersList" class="orders-list">
+                        <p>Cargando pedidos...</p>
+                    </div>
+                </div>
+            `;
+            
+            loadUserOrders();
+        }
+
+        async function loadUserCombos() {
+            try {
+                const combos = await getCombosHybrid();
+                const combosList = document.getElementById('combosList');
+                
+                if (combos.length === 0) {
+                    combosList.innerHTML = '<p>No hay combos disponibles</p>';
+                    return;
+                }
+                
+                combosList.innerHTML = combos.map(combo => `
+                    <div class="combo-card">
+                        <div class="combo-header">
+                            <h4>${combo.nombre || combo.name}</h4>
+                        </div>
+                        <div class="combo-content">
+                            <p class="combo-description">${combo.descripcion || combo.description}</p>
+                            <div class="combo-prices">
+                                <span class="price-daily">Diario: $${(combo.precioDiario || combo.price).toLocaleString()}</span>
+                                <span class="price-monthly">Mensual: $${(combo.precioMensual || combo.monthlyPrice).toLocaleString()}</span>
+                            </div>
+                            <div class="combo-stock">
+                                <span class="stock-label">Disponibles:</span>
+                                <span class="stock-value">${combo.disponibles || combo.availableQuota}</span>
+                            </div>
+                            <button class="btn-primary" onclick="addToCart(${combo.id})">Agregar al Carrito</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error cargando combos:', error);
+                document.getElementById('combosList').innerHTML = '<p>Error cargando combos</p>';
+            }
+        }
+
+        async function loadUserOrders() {
+            try {
+                const orders = await getUserOrders();
+                const ordersList = document.getElementById('ordersList');
+                
+                if (orders.length === 0) {
+                    ordersList.innerHTML = '<p>No tienes pedidos realizados</p>';
+                    return;
+                }
+                
+                ordersList.innerHTML = orders.map(order => `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <h4>Pedido #${order.id}</h4>
+                            <span class="order-date">${new Date(order.fechaCreacion).toLocaleDateString()}</span>
+                        </div>
+                        <div class="order-content">
+                            <p><strong>Combo:</strong> ${order.combo}</p>
+                            <p><strong>Tipo:</strong> ${order.tipo}</p>
+                            <p><strong>Total:</strong> $${order.total.toLocaleString()}</p>
+                            <p><strong>Estado:</strong> <span class="status ${order.estado}">${order.estado}</span></p>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error cargando pedidos:', error);
+                document.getElementById('ordersList').innerHTML = '<p>Error cargando pedidos</p>';
+            }
+        }
+
+        function addToCart(comboId) {
+            alert('Función de carrito en desarrollo');
+        }
+    </script>
+</body>
+</html>

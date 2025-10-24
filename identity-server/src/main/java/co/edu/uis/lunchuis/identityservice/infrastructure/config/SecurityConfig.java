@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
  * Spring Security configuration class for the LunchUIS Identity Service.
@@ -32,6 +33,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     /**
      * Configures the main security filter chain for the application.
@@ -49,7 +51,9 @@ public class SecurityConfig {
         http
                 // 1. Disable CSRF, as we are using JWT (stateless)
                 .csrf(AbstractHttpConfigurer::disable)
-                // 2. Define authorization rules
+                // 2. Enable CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                // 3. Define authorization rules
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers(
@@ -62,12 +66,12 @@ public class SecurityConfig {
                         // All other requests must be authenticated
                         .anyRequest().authenticated()
                 )
-                // 3. Set session management to STATELESS
+                // 4. Set session management to STATELESS
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 4. Set authentication provider
+                // 5. Set authentication provider
                 .authenticationProvider(authenticationProvider())
-                // 5. Add JWT filter before UsernamePasswordAuthenticationFilter
+                // 6. Add JWT filter before UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

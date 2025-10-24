@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunchUIS - Login</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-image" id="backgroundImage"></div>
+
+    <div class="container">
+        <div class="login-card">
+            <div class="logo-section">
+                <div class="logo-container">
+                    <img src="../img/logo.png" alt="Logo" class="logo-image" 
+                         onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block'">
+                    <div id="logoFallback" class="logo-fallback">LunchUIS</div>
+                </div>
+                <div class="lunch-time">Sistema de Gestión de Combos</div>
+            </div>
+            
+            <h1 class="login-title">Inicio de Sesión</h1>
+            
+            <div class="user-type-selector">
+                <div class="user-type admin active" data-type="admin">
+                    <span>Administrador</span>
+                </div>
+                <div class="user-type user" data-type="user">
+                    <span>Usuario</span>
+                </div>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Código Institucional</label>
+                    <input type="text" id="username" placeholder="Ej: 9999999" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="Ingresa tu contraseña" required>
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="#" id="forgotPassword">¿Olvidaste tu contraseña?</a>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <button type="submit" class="login-btn">
+                    <span>Ingresar</span>
+                </button>
+                
+                <a href="registro.html" class="register-btn" id="registerBtn">
+                    <span>Registrarse</span>
+                </a>
+            </form>
+            
+            <div id="message" class="message"></div>
+            
+            <div class="demo-credentials">
+                <h3>Credenciales de Prueba:</h3>
+                <div class="credential-item">
+                    <strong>Admin:</strong> 9999999 / @dmIn123
+                </div>
+                <div class="credential-item">
+                    <strong>Usuario:</strong> 2180001 / Password123!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Script simple y limpio para el login
+        console.log('✅ Login page cargada');
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Inicializando login...');
+            
+            // Configurar imagen de fondo
+            const bgElement = document.getElementById('backgroundImage');
+            const bgImageUrl = '../img/fondo.jpg';
+            
+            const img = new Image();
+            img.src = bgImageUrl;
+            
+            img.onload = function() {
+                bgElement.style.backgroundImage = `url('${bgImageUrl}')`;
+            };
+            
+            img.onerror = function() {
+                bgElement.style.background = 'var(--gradient-fallback)';
+            };
+            
+            // Configurar selector de tipo de usuario
+            const userTypes = document.querySelectorAll('.user-type');
+            userTypes.forEach(type => {
+                type.addEventListener('click', function() {
+                    userTypes.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    console.log('✅ Tipo seleccionado:', this.dataset.type);
+                });
+            });
+            
+            // Configurar formulario de login
+            const loginForm = document.getElementById('loginForm');
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                console.log('🎯 Formulario enviado');
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const userType = document.querySelector('.user-type.active')?.dataset.type;
+                
+                console.log('📨 Datos del login:', { username, password, userType });
+                
+                // Mostrar loading
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span>Conectando...</span>';
+                submitBtn.disabled = true;
+                
+                try {
+                    const result = await performLogin(username, password, userType);
+                    
+                    console.log('📨 Resultado del login:', result);
+                    
+                    showMessage(result.message, result.success ? 'success' : 'error');
+                    
+                    if (result.success) {
+                        console.log('✅ Login exitoso, redirigiendo en 1 segundo...');
+                        setTimeout(() => {
+                            redirectUser(result.user);
+                        }, 1000);
+                    }
+                } catch (error) {
+                    console.error('❌ Error en login:', error);
+                    showMessage('Error de conexión', 'error');
+                } finally {
+                    // Restaurar botón
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+        
+        // Función de login simplificada
+        async function performLogin(username, password, userType) {
+            console.log('🔐 Intentando login...', { username, password, userType });
+            
+            if (!username || !password) {
+                return { success: false, message: 'Por favor completa todos los campos' };
+            }
+
+            try {
+                // Convertir username a código institucional
+                const institutionalCode = parseInt(username);
+                if (isNaN(institutionalCode)) {
+                    return { success: false, message: 'El código institucional debe ser numérico' };
+                }
+
+                // Intentar conectar con el backend
+                const response = await fetch('http://localhost:8081/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        institutionalCode: institutionalCode,
+                        password: password
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Login exitoso:', data);
+
+                // Guardar token JWT
+                localStorage.setItem('jwtToken', data.token);
+                localStorage.setItem('backendConnected', 'true');
+
+                // Obtener información del usuario
+                const userInfo = await getUserProfile(data.token);
+                
+                // Verificar tipo de usuario si se especifica
+                if (userType && userInfo.role !== userType.toUpperCase()) {
+                    localStorage.removeItem('jwtToken');
+                    return { success: false, message: 'No tienes permisos para acceder como este tipo de usuario' };
+                }
+
+                // Guardar información del usuario
+                localStorage.setItem('currentUser', JSON.stringify(userInfo));
+                localStorage.setItem('isLoggedIn', 'true');
+
+                console.log('✅ Login completo, usuario:', userInfo);
+
+                return { 
+                    success: true, 
+                    message: 'Inicio de sesión exitoso',
+                    user: userInfo
+                };
+
+            } catch (error) {
+                console.error('❌ Error en login:', error);
+                
+                // Fallback a modo local si el backend no está disponible
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    console.log('⚠️ Backend no disponible, usando modo local');
+                    return loginLocal(username, password, userType);
+                }
+                
+                return { success: false, message: error.message || 'Error de conexión con el servidor' };
+            }
+        }
+        
+        // Función de login local (fallback)
+        function loginLocal(username, password, userType) {
+            console.log('🔐 Login local (fallback)...', { username, password, userType });
+            
+            // Usuarios locales para desarrollo
+            const localUsers = [
+                {
+                    id: 1,
+                    username: '9999999',
+                    password: '@dmIn123',
+                    type: 'admin',
+                    fullName: 'Administrador Principal',
+                    email: 'admin@uis.edu.co',
+                    role: 'ADMIN'
+                },
+                {
+                    id: 2,
+                    username: '2180001',
+                    password: 'Password123!',
+                    type: 'user',
+                    fullName: 'Usuario Estudiante',
+                    email: 'usuario@uis.edu.co',
+                    role: 'STUDENT'
+                }
+            ];
+            
+            const user = localUsers.find(u => u.username === username && u.password === password);
+            
+            if (!user) {
+                return { success: false, message: 'Usuario o contraseña incorrectos' };
+            }
+
+            if (userType && user.type !== userType) {
+                return { success: false, message: 'No tienes permisos para acceder como este tipo de usuario' };
+            }
+
+            // Guardar sesión local
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('backendConnected', 'false');
+            
+            console.log('✅ Login local exitoso:', user.username);
+
+            return { 
+                success: true, 
+                message: 'Inicio de sesión exitoso (modo local)',
+                user: user
+            };
+        }
+        
+        // Obtener perfil del usuario desde el backend
+        async function getUserProfile(token) {
+            try {
+                const response = await fetch('http://localhost:8081/api/v1/profile', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Error obteniendo perfil');
+                }
+                
+                const data = await response.json();
+                return {
+                    id: data.id,
+                    username: data.institutionalCode.toString(),
+                    fullName: `${data.firstName} ${data.lastName}`,
+                    email: data.email,
+                    type: data.role.toLowerCase(),
+                    role: data.role,
+                    enabled: data.enabled
+                };
+            } catch (error) {
+                console.error('❌ Error obteniendo perfil:', error);
+                throw error;
+            }
+        }
+        
+        // Redirigir usuario según su tipo
+        function redirectUser(user) {
+            console.log('🔄 Redirigiendo a:', user.type);
+            if (user.type === 'admin') {
+                window.location.href = 'dashboard-admin.html';
+            } else {
+                window.location.href = 'user.html';
+            }
+        }
+        
+        // Mostrar mensaje
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            if (!messageEl) return;
+            
+            messageEl.textContent = text;
+            messageEl.className = 'message ' + type;
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('backendConnected');
+            window.location.href = 'login.html';
+        }
+        
+        console.log('✅ Login script completamente cargado');
+    </script>
+</body>
+</html>

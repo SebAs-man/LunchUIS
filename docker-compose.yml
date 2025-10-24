@@ -105,6 +105,28 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lunchuis-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - lunchuis-net
+    depends_on:
+      - identity-server
+      - combo-server
+      - order-server
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
 # Define the named volume for data persistence
 volumes:
   postgres-data:

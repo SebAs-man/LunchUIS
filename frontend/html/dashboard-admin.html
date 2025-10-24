@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Elementio</title>
+    <link rel="stylesheet" href="../css/styles-admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>Panel de Administración</h1>
+                <div class="user-info">
+                    <span id="adminName"></span>
+                    <button id="logoutBtn" class="logout-btn">Cerrar Sesión</button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="admin-nav">
+            <button class="nav-btn active" data-tab="combos">Gestión de Combos</button>
+            <button class="nav-btn" data-tab="pedidos">Pedidos</button>
+            <button class="nav-btn" data-tab="estadisticas">Estadísticas</button>
+        </nav>
+
+        <main class="admin-main">
+            <!-- Sección Combos -->
+            <div id="combos-tab" class="tab-content active">
+                <div class="section-header">
+                    <h2>Gestión de Combos</h2>
+                    <button id="nuevoComboBtn" class="btn-primary">+ Nuevo Combo</button>
+                </div>
+                
+                <div id="combosList" class="combos-grid">
+                    <!-- Los combos se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Sección Pedidos -->
+            <div id="pedidos-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Pedidos Realizados</h2>
+                </div>
+                <div id="pedidosList" class="pedidos-container">
+                    <!-- Los pedidos se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Sección Estadísticas -->
+            <div id="estadisticas-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Estadísticas del Sistema</h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Combos Activos</h3>
+                        <span id="totalCombos">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pedidos Hoy</h3>
+                        <span id="pedidosHoy">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Ingresos Mensuales</h3>
+                        <span id="ingresosMensuales">$0</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para nuevo/editar combo -->
+    <div id="comboModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Nuevo Combo</h3>
+            <form id="comboForm">
+                <input type="hidden" id="comboId">
+                <div class="form-group">
+                    <label for="comboNombre">Nombre del Combo</label>
+                    <input type="text" id="comboNombre" placeholder="Ej: Combo Ejecutivo" required>
+                </div>
+                <div class="form-group">
+                    <label for="comboDescripcion">Descripción</label>
+                    <textarea id="comboDescripcion" placeholder="Describe los componentes del combo..." rows="3" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="precioDiario">Precio Diario</label>
+                        <input type="number" id="precioDiario" placeholder="15000" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="precioMensual">Precio Mensual</label>
+                        <input type="number" id="precioMensual" placeholder="300000" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="disponibles">Cantidad Disponible</label>
+                    <input type="number" id="disponibles" placeholder="50" min="0" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelComboBtn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Combo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS EN ORDEN CORRECTO -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/combos-api.js"></script>
+    <script src="../js/admin-crud-backend.js"></script>
+</body>
+</html>
