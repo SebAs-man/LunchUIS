@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunchUIS - Sistema de Gestión de Combos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-image" id="backgroundImage"></div>
+
+    <div class="container">
+        <div class="welcome-card">
+            <div class="logo-section">
+                <div class="logo-container">
+                    <img src="img/logo.png" alt="Logo" class="logo-image" 
+                         onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block'">
+                    <div id="logoFallback" class="logo-fallback">LunchUIS</div>
+                </div>
+                <div class="lunch-time">Sistema de Gestión de Combos</div>
+            </div>
+            
+            <h1 class="welcome-title">Bienvenido a LunchUIS</h1>
+            <p class="welcome-description">
+                Sistema de gestión de combos saludables para la Universidad Industrial de Santander
+            </p>
+            
+            <div class="action-buttons">
+                <a href="html/login.html" class="btn-primary">
+                    <span>Iniciar Sesión</span>
+                </a>
+                
+                <a href="html/registro.html" class="btn-secondary">
+                    <span>Registrarse</span>
+                </a>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <h3>🍱 Gestión de Combos</h3>
+                    <p>Administra y gestiona los combos saludables disponibles</p>
+                </div>
+                <div class="feature">
+                    <h3>📱 Fácil de Usar</h3>
+                    <p>Interfaz intuitiva y responsive para todos los dispositivos</p>
+                </div>
+                <div class="feature">
+                    <h3>🔐 Seguro</h3>
+                    <p>Autenticación segura con códigos institucionales</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgElement = document.getElementById('backgroundImage');
+            const bgImageUrl = 'img/fondo.jpg';
+            
+            const img = new Image();
+            img.src = bgImageUrl;
+            
+            img.onload = function() {
+                bgElement.style.backgroundImage = `url('${bgImageUrl}')`;
+            };
+            
+            img.onerror = function() {
+                bgElement.style.background = 'var(--gradient-fallback)';
+            };
+        });
+    </script>
+</body>
+</html>
