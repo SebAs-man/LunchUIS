@@ -1,6 +1,6 @@
 package co.edu.uis.lunchuis.comboservice.infrastructure.config;
 
-import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Security configuration for the Combo Service.
@@ -29,7 +30,7 @@ public class SecurityConfig {
     /**
      * Injects the Base64-encoded secret key from the config-server.
      */
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret-key}")
     private String jwtSigningKey;
 
     /**
@@ -47,7 +48,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // Permit access to Swagger UI and API docs
                         .requestMatchers(
-                                "/combos/**",
                                 "/swagger-ui/**",
                                 "/combos/api-docs/**",
                                 "/swagger-ui.html",
@@ -76,10 +76,9 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder() {
         // 1. Decode the Base64 secret key (same as identity-server)
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
-        // 2. Create the key specification for the Nimbus decoder
-        // The JCA algorithm name for "HS256" is "HmacSHA256"
-        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "HmacSHA256");
+        byte[] keyBytes = jwtSigningKey.getBytes(StandardCharsets.UTF_8);
+        // 2. Replicate the exact key generation from identity-server to infer the algorithm
+        SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
 
         // 3. Build the decoder
         return NimbusJwtDecoder.withSecretKey(secretKey).build();

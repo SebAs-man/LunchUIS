@@ -2,7 +2,7 @@
 
 -- Create schemas for each microservice
 CREATE SCHEMA IF NOT EXISTS identity;
-CREATE SCHEMA IF NOT EXISTS combo;
+CREATE SCHEMA IF NOT EXISTS combos;
 CREATE SCHEMA IF NOT EXISTS orders;
 
 -- Create UUID extension (required for the IDs)

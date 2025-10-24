@@ -4,7 +4,6 @@ import co.edu.uis.lunchuis.identityservice.application.service.JwtService;
 import co.edu.uis.lunchuis.identityservice.domain.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -47,6 +48,7 @@ public class JwtServiceImpl implements JwtService {
     public String generateToken(User user) {
         return Jwts.builder()
                 .subject(String.valueOf(user.getInstitutionalCode()))
+                .claim("roles", List.of(user.getRole().name()))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
@@ -109,7 +111,7 @@ public class JwtServiceImpl implements JwtService {
      * @return the secret key
      */
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
