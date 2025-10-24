@@ -71,7 +71,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: combo-server-runtime
-    container_name: lunchuis-combo-server
+    container_name: lunchuis-combo-service
     env_file:
       - .env
     ports:
@@ -91,7 +91,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: order-server-runtime
-    container_name: lunchuis-order-server
+    container_name: lunchuis-order-service
     env_file:
       - .env
     ports:
